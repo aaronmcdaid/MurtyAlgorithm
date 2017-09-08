@@ -8,7 +8,72 @@
 #ifndef AUCTIONALGORITHM_H_
 #define AUCTIONALGORITHM_H_
 
-#include "eigen/Eigen/Core"
+#include <vector>
+#include <cassert>
+#include <algorithm>
+#include <random>
+
+//#include "eigen/Eigen/Core"
+namespace Eigen {
+    template<typename Scalar, int, int>
+    class Matrix {
+        int m_rows;
+        int m_cols;
+        std:: vector<Scalar> m_mat;
+
+    public:
+        Matrix(int rows, int cols) : m_rows(rows), m_cols(cols), m_mat(rows*cols) {
+            // initialized with zeroes
+            assert(rows>0 && cols>0);
+        }
+        int rows() const { return m_rows; }
+        int cols() const { return m_cols; }
+
+        Scalar & operator() (int r, int c) {
+            return m_mat.at(r*m_cols + c);
+        }
+        Scalar   operator() (int r, int c) const {
+            return m_mat.at(r*m_cols + c);
+        }
+
+        Scalar maxCoeff() const {
+            return *std:: max_element(m_mat.begin(), m_mat.end());
+        }
+
+        Matrix & operator/=(Scalar div) {
+            assert(div != 0);
+            for(auto & one_cell : m_mat) {
+                one_cell /= div;
+            }
+            return *this;
+        }
+
+        static
+        Matrix Random(int r, int c, std:: mt19937 &);
+    };
+    template<typename Scalar, int i, int j>
+    Matrix<Scalar,i,j> Matrix<Scalar,i,j>:: Random(int r, int c, std:: mt19937 &g) {
+        Matrix m(r,c);
+        std::uniform_real_distribution<> dis(1, 6);
+        for(auto & cell : m.m_mat) {
+            cell = dis(g);
+        }
+        return m;
+    }
+
+    template<typename Scalar, int i, int j, typename stream>
+    stream & operator<<(stream &o, Matrix<Scalar,i,j> const & m) {
+        for(int r = 0; r < m.rows(); ++r) {
+            if(r==0) o << "[["; else o << " [";
+            for(int c = 0; c < m.cols(); ++c) {
+                o << '\t' << m(r,c);
+            }
+            if(r+1==m.rows()) o << "\t]]\n"; else o << "\t]\n";
+        }
+        return o;
+    }
+
+}
 #include <vector>
 
 #define __AUCTION_EPSILON_MULTIPLIER 1e-5

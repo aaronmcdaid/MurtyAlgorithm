@@ -6,11 +6,14 @@ int main()
 {
     // use cols > rows!
 
+    std::mt19937 g(1337);
+
 
     MurtyMiller<double>::WeightMatrix c_ij(20, 30);
+    std:: cout << c_ij << '\n';
     typedef MurtyMiller<double>::Edges Edges;
 
-    c_ij = MurtyMiller<double>::WeightMatrix::Random(20, 30);
+    c_ij = MurtyMiller<double>::WeightMatrix::Random(20, 30, g);
 
     for ( size_t r = 0; r < c_ij.rows(); ++r )
         for ( size_t c = 0; c < c_ij.cols(); ++c )

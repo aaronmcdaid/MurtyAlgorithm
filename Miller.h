@@ -18,6 +18,8 @@
 #include "AuctionAlgorithm.h"
 #include <queue>
 
+#include<cassert>
+#include<algorithm>
 
 template<typename Scalar = double>
 class MurtyMiller
